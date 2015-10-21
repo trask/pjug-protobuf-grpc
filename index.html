@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <meta name="keywords" content="remark,remarkjs,markdown,slideshow,presentation"/>
+  <meta name="description" content="A simple, in-browser, markdown-driven slideshow tool."/>
+  <title>Google Protocal Buffers and gRPC</title>
+  <style type="text/css">
+    @import url(//fonts.googleapis.com/css?family=Droid+Serif);
+    @import url(//fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+    @import url(//fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+    body {
+      font-family: 'Droid Serif';
+    }
+
+    h1, h2, h3 {
+      font-family: 'Yanone Kaffeesatz';
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+
+    .remark-slide-content h1 {
+      font-size: 3em;
+    }
+
+    .remark-slide-content h2 {
+      font-size: 2em;
+    }
+
+    .remark-slide-content h3 {
+      font-size: 1.6em;
+    }
+
+    .footnote {
+      position: absolute;
+      bottom: 3em;
+    }
+
+    li p {
+      line-height: 1.25em;
+    }
+
+    .red {
+      color: #fa0000;
+    }
+
+    .large {
+      font-size: 2em;
+    }
+
+    a, a > code {
+      color: black;
+      text-decoration: none;
+    }
+
+    code {
+      -moz-border-radius: 5px;
+      -web-border-radius: 5px;
+      background: #e7e8e2;
+      border-radius: 5px;
+      padding: 20px !important;
+    }
+
+    .remark-code, .remark-inline-code {
+      font-family: 'Ubuntu Mono';
+      font-size: 20px;
+    }
+
+    .remark-code-line-highlighted {
+      background-color: #373832;
+    }
+
+    .pull-left {
+      float: left;
+      width: 47%;
+    }
+
+    .pull-right {
+      float: right;
+      width: 47%;
+    }
+
+    .pull-right ~ p {
+      clear: both;
+    }
+
+    #slideshow .slide .content code {
+      font-size: 0.8em;
+    }
+
+    #slideshow .slide .content pre code {
+      font-size: 0.9em;
+      padding: 15px;
+    }
+
+    .inverse {
+      background: #272822;
+      color: #777872;
+      text-shadow: 0 0 20px #333;
+    }
+
+    .inverse h1, .inverse h2 {
+      color: #f3f3f3;
+      line-height: 0.8em;
+    }
+
+    /* Slide-specific styling */
+    #slide-inverse .footnote {
+      bottom: 12px;
+      left: 20px;
+    }
+
+    #slide-how .slides {
+      font-size: 0.9em;
+      position: absolute;
+      top: 151px;
+      right: 140px;
+    }
+
+    #slide-how .slides h3 {
+      margin-top: 0.2em;
+    }
+
+    #slide-how .slides .first, #slide-how .slides .second {
+      padding: 1px 20px;
+      height: 90px;
+      width: 120px;
+      -moz-box-shadow: 0 0 10px #777;
+      -webkit-box-shadow: 0 0 10px #777;
+      box-shadow: 0 0 10px #777;
+    }
+
+    #slide-how .slides .first {
+      background: #fff;
+      position: absolute;
+      top: 20%;
+      left: 20%;
+      z-index: 1;
+    }
+
+    #slide-how .slides .second {
+      position: relative;
+      background: #fff;
+      z-index: 0;
+    }
+
+    /* Two-column layout */
+    .left-column {
+      color: #777;
+      width: 23%;
+      height: 92%;
+      float: left;
+    }
+
+    .left-column h2:last-of-type, .left-column h3:last-child {
+      color: #000;
+    }
+
+    .right-column {
+      width: 75%;
+      float: right;
+      padding-top: 1em;
+    }
+
+    .vcenter h1, .vcenter h2 {
+      margin-top: 0;
+    }
+
+    /* more horizontal realestate */
+    .remark-slide-content {
+      padding-left: 2em;
+      padding-right: 2em;
+    }
+
+    .right-column-incremental {
+      width: 75%;
+      float: right;
+    }
+
+    .section-top-padding {
+      padding-top: 30px;
+    }
+
+	.super-mini .remark-code {
+	  font-size: 7px;
+	  padding-left: 10px;
+	}
+	
+	.smaller .remark-code {
+	  font-size: 18px;
+	}
+	
+	.example-usage {
+	  margin-top: -20px;
+	}
+	
+	.example-code code {
+	  background: #666 !important;
+	}
+
+	.example-code .remark-code-line-highlighted {
+	  background: #888;
+	}
+    
+    .jigsaw1-image img {
+      padding-top: 30px;
+      padding-left: 10px;
+      height: 550px;
+    }
+    
+    .jigsaw2-image img {
+      padding-top: 60px;
+      height: 450px;
+    }
+    
+    .copyright {
+      font-size: 12px;
+    }
+    
+    .incremental-bullets ul {
+      margin: 0;
+    }
+    
+    li {
+      margin-top: 5px;
+    }
+    
+    .narrow-bullets li {
+      margin-top: 0;
+    }
+    
+    .padding-top-5 {
+      padding-top: 5px;
+    }
+  </style>
+</head>
+<body>
+<textarea id="source">
+class: center, middle
+.vcenter[
+# Google Protocol Buffers and gRPC
+## Platform-neutral binary serialization over HTTP/2
+]
+
+
+
+---
+class: center, middle
+.vcenter[
+# PetClinic
+]
+
+
+
+---
+class: center, middle
+.vcenter[
+![Cats](images/cats.jpg)
+]
+
+
+---
+.left-column[
+## PetClinic.proto
+]
+.right-column[
+```protobuf
+syntax = "proto3";
+
+option java_package = "com.example";
+
+message Pet {
+  Animal animal = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+enum Animal {
+  UNKNOWN = 0;
+  CAT = 1;
+  DOG = 2;
+}
+
+message Address {
+  string street = 1;
+  string city = 2;
+}
+```
+]
+
+
+
+---
+.left-column[
+## gRPC
+]
+.right-column[
+```protobuf
+service PetClinicService {
+  rpc FindPetClinic (PetClinicRequest)
+          returns (PetClinicReply);
+}
+
+message PetClinicRequest {
+  string owner_name = 1;
+  repeated Pet pet = 2;
+  Address address = 3;
+}
+
+message PetClinicReply {
+  string name = 1;
+  Address address = 2;
+}
+```
+]
+
+
+
+---
+## Code generation step
+&nbsp;
+```bash
+protoc -I=src/main/protobuf
+       --plugin=protoc-gen-grpc-java=protoc-gen-grpc-java.exe
+       --java_out=src/main/java
+       --grpc-java_out=src/main/java
+       src/main/protobuf/*.proto
+```
+
+
+
+---
+## PetClinicService implementation
+&nbsp;
+```
+private static class PetClinicServiceImpl implements PetClinicService {
+    @Override
+    public void findPetClinic(PetClinicRequest request,
+            StreamObserver<PetClinicReply> responseObserver) {
+
+        responseObserver.onNext(PetClinicReply.newBuilder()
+                .setName("Fremont Veterinary Clinic")
+                .setAddress(Address.newBuilder()
+                        .setStreet("5055 NE Fremont St")
+                        .setCity("Portland")
+                        .build())
+                .build());
+        responseObserver.onCompleted();
+    }
+}
+```
+
+
+
+---
+## Start the server
+&nbsp;
+```
+Server server = NettyServerBuilder.forPort(8025)
+        .addService(PetClinicServiceGrpc.bindService(
+                new PetClinicServiceImpl()))
+        .build()
+        .start();
+server.awaitTermination();
+```
+
+
+
+---
+## Meanwhile, on the client
+&nbsp;
+```
+ManagedChannel channel = NettyChannelBuilder.forAddress("localhost", 8025)
+        .negotiationType(NegotiationType.PLAINTEXT)
+        .build();
+
+PetClinicServiceBlockingClient client =
+        PetClinicServiceGrpc.newBlockingStub(channel);
+```
+
+
+
+---
+## And call the server
+&nbsp;
+```
+PetClinicReply reply = client.findPetClinic(PetClinicRequest.newBuilder()
+        .setOwnerName("Trask Stalnaker")
+        .setAddress(Address.newBuilder()
+                .setStreet("3456 NE Fremont St")
+                .setCity("Portland")
+                .build())
+        .addPet(Pet.newBuilder()
+                .setAnimal(Animal.CAT)
+                .setName("Fiver")
+                .build())
+        .build());
+```
+
+
+
+---
+class: center, middle
+.vcenter[
+# Chat Server
+]
+
+
+
+---
+class: center, middle
+.vcenter[
+![Cats](images/cat4.jpg)
+![Cats](images/cat2.jpg)
+![Cats](images/cat1.jpg)
+]
+
+
+---
+.left-column[
+## Chat.proto
+]
+.right-column[
+```protobuf
+syntax = "proto3";
+
+option java_package = "com.example";
+
+service ChatService {
+    rpc connect (stream ChatMessage)
+            returns (stream ChatMessage);
+}
+
+message ChatMessage {
+  string message = 1;
+}
+```
+]
+
+
+
+---
+## ChatService implementation
+&nbsp;
+```
+static class ChatServiceImpl implements ChatService {
+
+    private Set<StreamObserver<ChatMessage>> clients = new HashSet<>();
+
+    @Override
+    public StreamObserver<ChatMessage> connect(
+            StreamObserver<ChatMessage> client) {
+
+        clients.add(client);
+
+        return ...
+    }
+}
+```
+
+
+
+---
+## ChatService implementation
+```
+        ...
+
+        return new StreamObserver<ChatMessage>() {
+
+            @Override
+            public void onNext(ChatMessage chatMessage) {
+                for (StreamObserver<ChatMessage> cl : clients) {
+                    if (cl != client) {
+                        cl.onNext(chatMessage);
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        };
+```
+
+
+
+---
+## Start the server
+&nbsp;
+```
+Server server = NettyServerBuilder.forPort(8025)
+        .addService(ChatServiceGrpc.bindService(new ChatServiceImpl()))
+        .build()
+        .start();
+server.awaitTermination();
+```
+
+
+
+---
+## Meanwhile, on the client
+```
+ManagedChannel channel = NettyChannelBuilder.forAddress("localhost", 8025)
+        .negotiationType(NegotiationType.PLAINTEXT)
+        .build();
+
+ChatService service = ChatServiceGrpc.newStub(channel);
+
+StreamObserver<ChatMessage> client = service.connect(
+        new StreamObserver<ChatMessage>() {
+
+            @Override
+            public void onNext(ChatMessage value) {
+                System.out.println(value.getMessage());
+            }
+
+            @Override
+            public void onError(Throwable t) {}
+
+            @Override
+            public void onCompleted() {}
+        });
+```
+
+
+
+---
+## And call the server
+&nbsp;
+```
+BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+String line;
+while ((line = in.readLine()) != null) {
+    client.onNext(ChatMessage.newBuilder()
+            .setMessage(line)
+            .build());
+}
+```
+
+
+</textarea>
+<script src="//gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+  var hljs = remark.highlighter.engine;
+  
+  hljs.registerLanguage('protobuf', function () {
+    return {
+      keywords: {
+        keyword: 'package import option optional required repeated group',
+        built_in: 'double float int32 int64 uint32 uint64 sint32 sint64 ' +
+          'fixed32 fixed64 sfixed32 sfixed64 bool string bytes',
+        literal: 'true false'
+      },
+      contains: [
+        hljs.QUOTE_STRING_MODE,
+        hljs.NUMBER_MODE,
+        hljs.C_LINE_COMMENT_MODE,
+        {
+          className: 'class',
+          beginKeywords: 'message enum service', end: /\{/,
+          illegal: /\n/,
+          contains: [
+            hljs.inherit(hljs.TITLE_MODE, {
+              starts: {endsWithParent: true, excludeEnd: true} // hack: eating everything after the first title
+            })
+          ]
+        },
+        {
+          className: 'function',
+          beginKeywords: 'rpc',
+          end: /;/, excludeEnd: true,
+          keywords: 'rpc returns'
+        },
+        {
+          className: 'constant',
+          begin: /^\s*[A-Z][A-Z_]+/,
+          end: /\s*=/, excludeEnd: true
+        }
+      ]
+    };
+  });
+</script>
+<script type="text/javascript">
+  var slideshow = remark.create({
+      highlightStyle: 'tomorrow-night-bright',
+      highlightLanguage: 'java'
+    }) ;
+</script>
+</body>
+</html>
