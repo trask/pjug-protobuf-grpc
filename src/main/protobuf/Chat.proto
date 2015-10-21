@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.example";
+
+service ChatService {
+    rpc connect (stream ChatMessage) returns (stream ChatMessage);
+}
+
+message ChatMessage {
+  string message = 1;
+}

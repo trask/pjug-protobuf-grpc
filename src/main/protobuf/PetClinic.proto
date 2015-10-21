@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option java_package = "com.example";
+
+service PetClinicService {
+  rpc FindPetClinic (PetClinicRequest) returns (PetClinicReply);
+}
+
+message PetClinicRequest {
+  string owner_name = 1;
+  repeated Pet pet = 2;
+  Address address = 3;
+}
+
+message PetClinicReply {
+  string name = 1;
+  Address address = 2;
+}
+
+message Pet {
+  Animal animal = 1;
+  string name = 2;
+  int32 age = 3;
+}
+
+message Address {
+  string street = 1;
+  string city = 2;
+}
+
+enum Animal {
+  UNKNOWN = 0;
+  CAT = 1;
+  DOG = 2;
+}
